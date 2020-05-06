@@ -1,5 +1,6 @@
 // Program to evaluate infix expressions
-// Supported operators: + - x * / ^ ( )
+// Supported math operators: + - x * / ^
+// Parentheses are handled
 // Multiplication can be done with * or x
 
 #include <stdio.h>
@@ -8,7 +9,7 @@
 #include <math.h>
 #include <ctype.h>
 
-// simple stack with macros
+// simple macro stack
 #define stackSize 1024
 double stack[stackSize] = {0};
 int top = -1;
@@ -18,11 +19,11 @@ int top = -1;
 #define pop --top
 
 // whether to print postfix parse for debugging
-#define PRINT_POSTFIX 1
+#define PRINT_POSTFIX 0
 
 #define MAXLEN 1024 // max length of strings
 
-int isOperator(int c)
+int isOperator(int c)// parentheses not considered operators
 {
 	return (c == '+' || c == '-' || c == '*' || c == 'x' || c == '/' || c == '^');
 }
@@ -77,8 +78,7 @@ void postfix_eval(char *expr)
 			double a = peek;
 			pop;
 			push(calc(a, b, *token));
-		}
-		else {
+		} else {
 			goto error;
 		}
 	}
@@ -87,14 +87,13 @@ void postfix_eval(char *expr)
 	if(!(isEmpty)) {
 		res = peek;
 		pop;
-	}
-	else
+	} else {
 		goto error;
+	}
 	if(!(isEmpty)) {
 		goto error;
 	}
-	
-	printf("\nResult: %f\n", res);
+	printf("\nResult: %g\n", res);
 	return;
 	
 	error:
@@ -130,7 +129,7 @@ char *infix2postfix(char *expr)
 		// handling operators
 		else if(expr[c] != '(' && expr[c] != ')') {
 			// handling negative numbers
-			if(expr[c] == '-' && (c == 0 || !isdigit(expr[c - 1]))) 
+			if(expr[c] == '-' && (c == 0 || isOperator(expr[c - 1]))) 
 				*oPtr++ = expr[c];
 			
 			// handling regular operators
@@ -184,7 +183,7 @@ int main()
 	int i=0	, j=0;
 	while(i <= MAXLEN) {
 		if(tmp[i] == '-') {
-			if(i == 0 || !isdigit(tmp[i-1])) {
+			if(i == 0 || isOperator(tmp[i-1])) {
 				strncpy(&expr[j], "-1*", 3);
 				j+=3, i++;
 				continue;
