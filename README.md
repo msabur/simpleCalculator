@@ -14,3 +14,9 @@ The program can only accept intrger output, and can only give integer output.
 
 # Usage
 Compile with 'gcc calculator.c' and run with './a.out'. Then enter an infix expression without spaces. 
+
+Example expression and answer:
+
+```23-4*(2+3)
+
+3```
