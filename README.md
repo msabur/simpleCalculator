@@ -17,6 +17,8 @@ Compile with 'gcc calculator.c' and run with './a.out'. Then enter an infix expr
 
 Example expression and answer:
 
-```23-4*(2+3)
+```
+23-4*(2+3)
 
-3```
+3
+```
