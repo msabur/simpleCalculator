@@ -11,7 +11,7 @@ The maximum expression length is 1024 characters. This is the limit for the inpu
 The maximum expression length limit may be changed.
 
 # Usage
-Compile with 'gcc calculator.c' and run with './a.out'. Then enter an infix expression without spaces. 
+Compile with ```gcc calculator.c``` and run with ```./a.out```. Then enter an infix expression without spaces. 
 
 Example expression and answer:
 
