@@ -1,7 +1,6 @@
 // Program to evaluate infix expressions
 // Supported operators: + - x * / ^ ( )
 // Multiplication can be done with * or x
-// Only deals with integers
 
 #include <stdio.h>
 #include <string.h>
@@ -11,7 +10,7 @@
 
 // simple stack with macros
 #define stackSize 1024
-int stack[stackSize] = {0};
+double stack[stackSize] = {0};
 int top = -1;
 #define peek stack[top]
 #define isEmpty top == -1
@@ -19,7 +18,7 @@ int top = -1;
 #define pop --top
 
 // whether to print postfix parse for debugging
-#define PRINT_POSTFIX 0
+#define PRINT_POSTFIX 1
 
 #define MAXLEN 1024 // max length of strings
 
@@ -28,7 +27,7 @@ int isOperator(int c)
 	return (c == '+' || c == '-' || c == '*' || c == 'x' || c == '/' || c == '^');
 }
 
-int calc(int a, int b, char op)
+double calc(double a, double b, char op)
 {
 	switch(op) {
 		case '+':
@@ -50,12 +49,12 @@ void postfix_eval(char *expr)
 	for(char *token = strtok(expr, " "); token; token = strtok(NULL, " ")) {
 		size_t j = strlen(token);
 		// handling positive numbers
-		if(isdigit(token[0])) {
+		if(isdigit(token[0]) || token[0] == '.') {
 			while(--j > 0)
-				if(!isdigit(token[j])) {
+				if(!(isdigit(token[j]) || token[j] == '.')) {
 					goto error;
 				}
-			push(atoi(token));
+			push(atof(token));
 		}
 		// handling negative numbers
 		else if(j > 1 && token[0] == '-') {
@@ -63,19 +62,19 @@ void postfix_eval(char *expr)
 				if(!isdigit(token[j])) {
 					goto error;
 				}
-			push(atoi(token));
+			push(atof(token));
 		}
 		// handling operators
 		else if(j == 1 && isOperator(token[0])) {
 			if(isEmpty) {
 				goto error;
 			}
-			int b = peek;
+			double b = peek;
 			pop;
 			if(isEmpty) {
 				goto error;
 			}
-			int a = peek;
+			double a = peek;
 			pop;
 			push(calc(a, b, *token));
 		}
@@ -84,7 +83,7 @@ void postfix_eval(char *expr)
 		}
 	}
 	
-	int res;
+	double res;
 	if(!(isEmpty)) {
 		res = peek;
 		pop;
@@ -95,7 +94,7 @@ void postfix_eval(char *expr)
 		goto error;
 	}
 	
-	printf("\nResult: %d\n", res);
+	printf("\nResult: %f\n", res);
 	return;
 	
 	error:
@@ -123,9 +122,9 @@ char *infix2postfix(char *expr)
 	
 	for(int c = 0; c < len; c++) {
 		// handling numbers
-		if(isdigit(expr[c])) {
+		if(isdigit(expr[c]) || expr[c] == '.') {
 			*oPtr++ = expr[c];
-			if(!isdigit(expr[c + 1]))
+			if(!(isdigit(expr[c + 1]) || expr[c + 1] == '.'))
 				*oPtr++ = ' ';
 		}
 		// handling operators
@@ -175,7 +174,6 @@ char *infix2postfix(char *expr)
 
 int main()
 {
-	puts("Infix calculator");
 	puts("Enter expression without spaces:");
 	char expr[MAXLEN + 1], tmp[MAXLEN + 1];
 	fgets(tmp, MAXLEN, stdin);
